@@ -11,17 +11,37 @@
 
 <br/>
 
+[![Download APK](https://img.shields.io/badge/Download-APK-brightgreen?style=for-the-badge&logo=android)](https://github.com/Dustu-Hub/ShitMate/releases/latest/download/ShitMate.apk)
 [![Latest release](https://img.shields.io/github/v/release/Dustu-Hub/ShitMate?style=for-the-badge&labelColor=0d1117)](https://github.com/Dustu-Hub/ShitMate/releases)
 [![License](https://img.shields.io/github/license/Dustu-Hub/ShitMate?style=for-the-badge&labelColor=0d1117)](https://github.com/Dustu-Hub/ShitMate/blob/main/LICENSE)
 
 <br/>
 
-[**Download**](#download) · [**Features**](#features) · [**Contributing**](#contributing) · [**Disclaimer**](#disclaimer)
+[**⬇️ Download**](#download) · [**Features**](#features) · [**Contributing**](#contributing) · [**Disclaimer**](#disclaimer)
 
 </div>
 
 > [!IMPORTANT]
 > ShitMate is not affiliated with, endorsed by, or connected to YouTube or Google in any way. Use it at your own discretion.
+
+---
+
+<div align="center">
+
+<h1><a id="download"></a>📲 Download ShitMate APK</h1>
+
+### ⬇️ [Click Here to Download Latest APK (Direct Download)](https://github.com/Dustu-Hub/ShitMate/releases/latest/download/ShitMate.apk)
+
+<br/>
+
+| Package | Link | Requirements |
+|---|---|---|
+| **ShitMate (Standard Release)** | [**Download ShitMate.apk**](https://github.com/Dustu-Hub/ShitMate/releases/latest/download/ShitMate.apk) | Android 8.0+ |
+| **All Architecture Builds** | [**Browse GitHub Releases**](https://github.com/Dustu-Hub/ShitMate/releases) | arm64-v8a / universal |
+
+> **Note:** When installing the APK for the first time, allow "Install unknown apps" in your phone's settings when prompted by your browser or file manager.
+
+</div>
 
 ---
 
@@ -56,21 +76,6 @@
     </td>
   </tr>
 </table>
-
-</div>
-
----
-
-<div align="center">
-
-<h1><a id="download"></a>Download APK</h1>
-
-Download the latest version directly from the [Releases](https://github.com/Dustu-Hub/ShitMate/releases) page.
-
-| Architecture | Recommended For |
-|---|---|
-| **ShitMate-arm64.apk** | Modern Android devices (Android 8.0+) |
-| **ShitMate-Universal.apk** | Universal build (All architectures) |
 
 </div>
 
