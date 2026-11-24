@@ -1,0 +1,19 @@
+{
+  "name": "shitmate-web",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @shitmate/app dev",
+    "dev:ext": "pnpm --filter @shitmate/extension dev",
+    "dev:ext:firefox": "pnpm --filter @shitmate/extension dev:firefox",
+    "build": "pnpm -r build",
+    "build:site": "pnpm --filter @shitmate/extension package && pnpm --filter @shitmate/app build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "fixtures": "node scripts/capture-fixtures.mjs"
+  }
+}

@@ -1,0 +1,65 @@
+name: Android Release APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Setup local.properties
+      run: |
+        echo "LASTFM_API_KEY=${{ secrets.LASTFM_API_KEY }}" > local.properties
+        echo "LASTFM_SECRET=${{ secrets.LASTFM_SECRET }}" >> local.properties
+        echo "LISTEN_TOGETHER_SERVER=${{ secrets.LISTEN_TOGETHER_SERVER }}" >> local.properties
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build ShitMate Phone APK
+      run: ./gradlew :app:assembleDevDebug -Pshitmate.bundleWear=false --stacktrace
+
+    - name: Prepare APK
+      run: |
+        mkdir -p release_apk
+        cp app/build/outputs/apk/dev/debug/*.apk release_apk/ShitMate.apk
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ShitMate-APK
+        path: release_apk/ShitMate.apk
+
+    - name: Publish GitHub Release with APK
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v1.0.0
+        name: "ShitMate v1.0.0"
+        body: |
+          ### ShitMate v1.0.0 Release
+          
+          Direct Android APK download is attached below.
+          - 🎵 Aesthetic YouTube Music & Hi-Res lossless playback
+          - 🎤 Karaoke / Vocal Suppressor DSP Mode (in Equalizer settings)
+          - 📊 Reactive Neon Audio Visualizer component
+          - 🖤 True AMOLED Pitch-Black Theme
+          - 🌙 Smart Sleep Timer with smooth volume fade-out
+        files: release_apk/ShitMate.apk
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
