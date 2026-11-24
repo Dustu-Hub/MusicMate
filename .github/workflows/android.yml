@@ -38,13 +38,29 @@ jobs:
     - name: Prepare APK
       run: |
         mkdir -p release_apk
-        cp app/build/outputs/apk/dev/debug/*.apk release_apk/ShitMate.apk
+        for f in app/build/outputs/apk/dev/debug/*.apk; do
+          if [[ "$f" == *"arm64"* ]]; then
+            cp "$f" release_apk/ShitMate-arm64.apk
+          elif [[ "$f" == *"universal"* ]]; then
+            cp "$f" release_apk/ShitMate-Universal.apk
+            cp "$f" release_apk/ShitMate.apk
+          elif [[ "$f" == *"v7a"* ]]; then
+            cp "$f" release_apk/ShitMate-armeabi-v7a.apk
+          elif [[ "$f" == *"x86_64"* ]]; then
+            cp "$f" release_apk/ShitMate-x86_64.apk
+          fi
+        done
+        if [ ! -f release_apk/ShitMate.apk ]; then
+          first_apk=$(ls app/build/outputs/apk/dev/debug/*.apk | head -n 1)
+          cp "$first_apk" release_apk/ShitMate.apk
+        fi
+        ls -la release_apk/
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ShitMate-APK
-        path: release_apk/ShitMate.apk
+        name: ShitMate-APKs
+        path: release_apk/
 
     - name: Publish GitHub Release with APK
       uses: softprops/action-gh-release@v2
@@ -54,12 +70,17 @@ jobs:
         body: |
           ### ShitMate v1.0.0 Release
           
-          Direct Android APK download is attached below.
+          Direct Android APK downloads attached below:
+          - ⬇️ **ShitMate.apk** (Universal - works on all devices)
+          - ⬇️ **ShitMate-arm64.apk** (Optimized for modern 64-bit phones)
+          
+          #### Features:
           - 🎵 Aesthetic YouTube Music & Hi-Res lossless playback
           - 🎤 Karaoke / Vocal Suppressor DSP Mode (in Equalizer settings)
           - 📊 Reactive Neon Audio Visualizer component
           - 🖤 True AMOLED Pitch-Black Theme
           - 🌙 Smart Sleep Timer with smooth volume fade-out
-        files: release_apk/ShitMate.apk
+          - ⚡ 100% ShitMate Rebranded
+        files: release_apk/*.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
