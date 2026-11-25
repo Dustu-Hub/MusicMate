@@ -142,7 +142,7 @@ android {
         create("dev") {
             dimension = "env"
             applicationId = "com.dev.shitmate"
-            resValue("string", "app_name", "ShitMate Dev")
+            resValue("string", "app_name", "ShitMate")
         }
         create("prod") {
             dimension = "env"
