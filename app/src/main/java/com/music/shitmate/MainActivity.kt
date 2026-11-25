@@ -5789,8 +5789,9 @@ private fun ShitMateApp(
                     onInstall = {
                         val ready = AppUpdateChecker.download.value as? AppUpdateChecker.DownloadState.Ready
                         ready?.let {
-                            showUpdateDialog = false
-                            AppUpdateChecker.installApk(context, it.file)
+                            if (AppUpdateChecker.installApk(context, it.file)) {
+                                showUpdateDialog = false
+                            }
                         }
                     },
                     onOpenReleasePage = {

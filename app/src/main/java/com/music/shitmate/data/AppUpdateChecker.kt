@@ -109,13 +109,20 @@ object AppUpdateChecker {
      * page.
      */
     private fun apkAssetUrl(release: JsonObject): String? = runCatching {
+        val isDevBuild = BuildConfig.APPLICATION_ID.contains(".dev", ignoreCase = true)
         val assets = release["assets"]?.jsonArray
             ?.mapNotNull { it as? JsonObject }
             ?.filter { asset ->
                 val name = asset["name"]?.jsonPrimitive?.contentOrNull ?: return@filter false
                 val uploaded = asset["state"]?.jsonPrimitive?.contentOrNull == "uploaded"
+                val flavorMatches = if (isDevBuild) {
+                    name.contains("-dev-", ignoreCase = true)
+                } else {
+                    !name.contains("-dev-", ignoreCase = true)
+                }
                 name.endsWith(".apk", ignoreCase = true) && uploaded &&
-                    (name.startsWith(BuildConfig.UPDATE_APK_PREFIX, ignoreCase = true) || name.startsWith("ShitMate", ignoreCase = true))
+                    (name.startsWith(BuildConfig.UPDATE_APK_PREFIX, ignoreCase = true) || name.startsWith("ShitMate", ignoreCase = true)) &&
+                    flavorMatches
             }
             .orEmpty()
 
@@ -218,7 +225,7 @@ object AppUpdateChecker {
      * Some TV builds have no such settings screen; there the installer is
      * launched anyway and shows its own "not allowed" prompt with a way in.
      */
-    fun installApk(context: Context, file: File) {
+    fun installApk(context: Context, file: File): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
             !context.packageManager.canRequestPackageInstalls()
         ) {
@@ -229,15 +236,21 @@ object AppUpdateChecker {
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
                 )
             }.isSuccess
-            if (opened) return
+            if (opened) return false
         }
-        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
-        val installIntent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(uri, "application/vnd.android.package-archive")
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        return runCatching {
+            val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+            val installIntent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "application/vnd.android.package-archive")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(installIntent)
+            true
+        }.getOrElse { error ->
+            _download.value = DownloadState.Failed(error.message ?: "Unable to launch package installer")
+            false
         }
-        context.startActivity(installIntent)
     }
 
     /** A version split into its numeric dotted parts and whether it carries a "-suffix" (e.g. "-beta2"). */
