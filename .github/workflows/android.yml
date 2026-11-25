@@ -86,22 +86,22 @@ jobs:
     - name: Publish GitHub Release with APK
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v2.0.1
-        name: "ShitMate v2.0.1"
+        tag_name: v2.0.2
+        name: "ShitMate v2.0.2"
         body: |
-          ### ShitMate v2.0.1 Release
+          ### ShitMate v2.0.2 Release
           
           Direct Android APK downloads attached below:
           - ⬇️ **ShitMate.apk** (Universal - works on all devices)
           - ⬇️ **ShitMate-arm64.apk** (Optimized for modern 64-bit phones)
           
           #### What's New:
-          - 🔄 **In-App Update Feature**: Update directly inside Settings -> "Check for updates" with one click
-          - ⚡ Clean **ShitMate** App Label (no Dev suffix)
-          - 🔑 Permanent Cryptographic Signing for seamless updates
-          - 🎵 Aesthetic YouTube Music & Hi-Res lossless playback
-          - 🎤 Karaoke / Vocal Suppressor DSP Mode (in Equalizer settings)
-          - 📊 Reactive Neon Audio Visualizer component
+          - 🔄 **In-App Update System**: One-tap background updater with direct Android PackageInstaller integration
+          - ⚡ Clean **ShitMate** branding across the entire app
+          - 🔑 Unified permanent cryptographic signing
+          - 🎵 Lossless Hi-Res & YouTube Music streaming
+          - 🎤 Karaoke / Vocal Suppressor DSP Mode (Equalizer settings)
+          - 📊 Neon Audio Waveform Visualizer
           - 🖤 True AMOLED Pitch-Black Theme
           - 🌙 Smart Sleep Timer with smooth volume fade-out
         files: release_apk/*.apk

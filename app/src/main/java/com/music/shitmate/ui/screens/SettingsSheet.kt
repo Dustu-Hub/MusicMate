@@ -1955,10 +1955,15 @@ fun SettingsScreen(
             SettingsGroup(topSpacing = 20.dp) {
                 var checkingUpdate by remember { mutableStateOf(false) }
                 val updateScope = rememberCoroutineScope()
+                val updateAvailable by AppUpdateChecker.available.collectAsStateWithLifecycle()
                 SettingsRow(
                     icon = Icons.Rounded.Upgrade,
                     title = stringResource(R.string.check_for_updates),
-                    subtitle = if (checkingUpdate) stringResource(R.string.checking_for_updates) else "Current version: $version",
+                    subtitle = when {
+                        checkingUpdate -> stringResource(R.string.checking_for_updates)
+                        updateAvailable != null -> "Update v${updateAvailable?.version} available • Tap to update"
+                        else -> "Current version: $version (Up to date)"
+                    },
                     trailing = {
                         if (checkingUpdate) {
                             CircularProgressIndicator(
@@ -1985,7 +1990,7 @@ fun SettingsScreen(
                                 } else {
                                     Toast.makeText(
                                         context,
-                                        context.getString(R.string.app_up_to_date, version),
+                                        "You are using the latest version of ShitMate (v$version)",
                                         Toast.LENGTH_SHORT,
                                     ).show()
                                 }
