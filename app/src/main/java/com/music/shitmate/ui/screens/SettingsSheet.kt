@@ -1,5 +1,8 @@
 package com.music.shitmate.ui.screens
 
+import androidx.compose.material.icons.rounded.Upgrade
+import androidx.compose.material3.CircularProgressIndicator
+import com.music.shitmate.data.AppUpdateChecker
 import com.music.shitmate.ui.icons.SfIcons
 import com.music.shitmate.wear.WatchInstaller
 import android.content.Context
@@ -228,6 +231,8 @@ fun SettingsScreen(
     onOpenSection: (SettingsCategory) -> Unit = {},
     /** Opens a choice with more options than its row can show, as a page. */
     onOpenChoice: (SettingsChoiceKind) -> Unit = {},
+    /** Triggered when an update check reveals a new version. */
+    onCheckForUpdates: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
 
@@ -1947,6 +1952,48 @@ fun SettingsScreen(
         // The version line is the page's colophon, not a setting: it belongs to
         // the whole list, so it goes when the list is narrowed to a few rows.
         if (section == null && searchQuery.isBlank()) {
+            SettingsGroup(topSpacing = 20.dp) {
+                var checkingUpdate by remember { mutableStateOf(false) }
+                val updateScope = rememberCoroutineScope()
+                SettingsRow(
+                    icon = Icons.Rounded.Upgrade,
+                    title = stringResource(R.string.check_for_updates),
+                    subtitle = if (checkingUpdate) stringResource(R.string.checking_for_updates) else "Current version: $version",
+                    trailing = {
+                        if (checkingUpdate) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                            )
+                        } else {
+                            Icon(
+                                Icons.Rounded.ChevronRight,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    },
+                    onClick = {
+                        if (!checkingUpdate) {
+                            checkingUpdate = true
+                            updateScope.launch {
+                                AppUpdateChecker.check()
+                                checkingUpdate = false
+                                val update = AppUpdateChecker.available.value
+                                if (update != null) {
+                                    onCheckForUpdates?.invoke()
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.app_up_to_date, version),
+                                        Toast.LENGTH_SHORT,
+                                    ).show()
+                                }
+                            }
+                        }
+                    },
+                )
+            }
         Text(
             text = buildAnnotatedString {
                 append("shitmate $version  ")

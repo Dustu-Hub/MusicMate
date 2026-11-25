@@ -3309,6 +3309,7 @@ private fun ShitMateApp(
                                 onEditSignatureApi = { editingSignatureApi = true },
                                 onConfirmBitPerfect = { confirmBitPerfect = it },
                                 onConfirmFixedVolume = { confirmFixedVolume = true },
+                                onCheckForUpdates = { showUpdateDialog = true },
                                 contentPadding = listPadding,
                             )
                         } else if (page != null) {

@@ -109,21 +109,39 @@ object AppUpdateChecker {
      * page.
      */
     private fun apkAssetUrl(release: JsonObject): String? = runCatching {
-        val apks = release["assets"]?.jsonArray
+        val assets = release["assets"]?.jsonArray
             ?.mapNotNull { it as? JsonObject }
-            ?.mapNotNull { asset ->
-                val name = asset["name"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
-                val url = asset["browser_download_url"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
-                val ours = name.startsWith(BuildConfig.UPDATE_APK_PREFIX, ignoreCase = true) &&
-                    name.endsWith(".apk", ignoreCase = true) &&
-                    asset["state"]?.jsonPrimitive?.contentOrNull == "uploaded"
-                if (ours) name.removeSuffix(".apk").removeSuffix(".APK") to url else null
+            ?.filter { asset ->
+                val name = asset["name"]?.jsonPrimitive?.contentOrNull ?: return@filter false
+                val uploaded = asset["state"]?.jsonPrimitive?.contentOrNull == "uploaded"
+                name.endsWith(".apk", ignoreCase = true) && uploaded &&
+                    (name.startsWith(BuildConfig.UPDATE_APK_PREFIX, ignoreCase = true) || name.startsWith("ShitMate", ignoreCase = true))
             }
             .orEmpty()
-        apks.firstOrNull { (name, _) -> '_' !in name }?.second
-            ?: Build.SUPPORTED_ABIS.firstNotNullOfOrNull { abi ->
-                apks.firstOrNull { (name, _) -> name.endsWith("_$abi") }?.second
+
+        fun findByName(vararg patterns: String): String? {
+            for (p in patterns) {
+                val match = assets.firstOrNull { asset ->
+                    val name = asset["name"]?.jsonPrimitive?.contentOrNull ?: ""
+                    name.contains(p, ignoreCase = true)
+                }
+                if (match != null) {
+                    return match["browser_download_url"]?.jsonPrimitive?.contentOrNull
+                }
             }
+            return null
+        }
+
+        val abiUrl = Build.SUPPORTED_ABIS.firstNotNullOfOrNull { abi ->
+            when {
+                abi.contains("arm64", ignoreCase = true) -> findByName("arm64")
+                abi.contains("v7a", ignoreCase = true) -> findByName("v7a", "armeabi")
+                abi.contains("x86_64", ignoreCase = true) -> findByName("x86_64")
+                else -> null
+            }
+        }
+
+        abiUrl ?: findByName("universal") ?: findByName("ShitMate.apk")
     }.getOrNull()
 
     /**

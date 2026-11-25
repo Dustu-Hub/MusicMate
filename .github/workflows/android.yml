@@ -32,16 +32,23 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    - name: Setup permanent signing keystore
+      run: |
+        echo "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" | base64 -d > shitmate.jks
+        printf 'storeFile=shitmate.jks\nstorePassword=shitmatepassword\nkeyAlias=shitmate\nkeyPassword=shitmatepassword\n' > keystore.properties
+
     - name: Build ShitMate Phone APK
-      run: ./gradlew :app:assembleProdDebug -Pshitmate.bundleWear=false --stacktrace
+      run: ./gradlew :app:assembleProdDebug :app:assembleDevDebug -Pshitmate.bundleWear=false --stacktrace
 
     - name: Prepare APK
       run: |
         mkdir -p release_apk
-        for f in app/build/outputs/apk/prod/debug/*.apk app/build/outputs/apk/dev/debug/*.apk; do
+        # Copy production APKs
+        for f in app/build/outputs/apk/prod/debug/*.apk; do
           if [ -f "$f" ]; then
             if [[ "$f" == *"arm64"* ]]; then
               cp "$f" release_apk/ShitMate-arm64.apk
+              cp "$f" release_apk/ShitMate-v2.0.0.apk
             elif [[ "$f" == *"universal"* ]]; then
               cp "$f" release_apk/ShitMate-Universal.apk
               cp "$f" release_apk/ShitMate.apk
@@ -49,6 +56,16 @@ jobs:
               cp "$f" release_apk/ShitMate-armeabi-v7a.apk
             elif [[ "$f" == *"x86_64"* ]]; then
               cp "$f" release_apk/ShitMate-x86_64.apk
+            fi
+          fi
+        done
+        # Copy dev APKs for users on com.dev.shitmate
+        for f in app/build/outputs/apk/dev/debug/*.apk; do
+          if [ -f "$f" ]; then
+            if [[ "$f" == *"arm64"* ]]; then
+              cp "$f" release_apk/ShitMate-dev-arm64.apk
+            elif [[ "$f" == *"universal"* ]]; then
+              cp "$f" release_apk/ShitMate-dev-Universal.apk
             fi
           fi
         done
@@ -67,22 +84,24 @@ jobs:
     - name: Publish GitHub Release with APK
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.0.1
-        name: "ShitMate v1.0.1"
+        tag_name: v2.0.0
+        name: "ShitMate v2.0.0"
         body: |
-          ### ShitMate v1.0.1 Release
+          ### ShitMate v2.0.0 Release
           
           Direct Android APK downloads attached below:
           - ⬇️ **ShitMate.apk** (Universal - works on all devices)
           - ⬇️ **ShitMate-arm64.apk** (Optimized for modern 64-bit phones)
           
-          #### Features:
+          #### What's New:
+          - 🔄 **In-App Update Feature**: Update directly inside Settings -> "Check for updates" with one click
+          - ⚡ Clean **ShitMate** App Label (no Dev suffix)
+          - 🔑 Permanent Cryptographic Signing for seamless updates
           - 🎵 Aesthetic YouTube Music & Hi-Res lossless playback
           - 🎤 Karaoke / Vocal Suppressor DSP Mode (in Equalizer settings)
           - 📊 Reactive Neon Audio Visualizer component
           - 🖤 True AMOLED Pitch-Black Theme
           - 🌙 Smart Sleep Timer with smooth volume fade-out
-          - ⚡ Clean "ShitMate" App Label (no Dev suffix)
         files: release_apk/*.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

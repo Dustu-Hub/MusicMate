@@ -173,6 +173,7 @@ android {
     buildTypes {
         debug {
             if (betaSuffix.isNotEmpty()) versionNameSuffix = "-$betaSuffix"
+            signingConfigs.findByName("release")?.let { signingConfig = it }
         }
         release {
             // Carried here too — see [betaSuffix]. A sideloaded beta is a
