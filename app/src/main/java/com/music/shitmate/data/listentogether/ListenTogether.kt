@@ -367,8 +367,8 @@ object ListenTogether {
      * in `local.properties` or build environment.
      */
     val defaultServer: String = when (val res = parseAndNormalizeServerUrl(BuildConfig.LISTEN_TOGETHER_SERVER)) {
-        is ServerUrlValidationResult.Valid -> res.normalizedUrl
-        is ServerUrlValidationResult.Invalid -> error("Invalid BuildConfig.LISTEN_TOGETHER_SERVER: ${BuildConfig.LISTEN_TOGETHER_SERVER}")
+        is ServerUrlValidationResult.Valid -> res.normalizedUrl.ifBlank { "https://shitmate-listen-together.onrender.com" }
+        is ServerUrlValidationResult.Invalid -> "https://shitmate-listen-together.onrender.com"
     }
 
     /**

@@ -363,7 +363,7 @@ fun ListenTogetherScreen(
                     maxMembers = maxMembers,
                     onMaxMembersChange = { maxMembers = it.coerceIn(2, 10) },
                     busy = busy,
-                    enabled = signedIn && ListenTogether.hasServer,
+                    enabled = !busy,
                     error = failure,
                     onCreate = {
                         busy = true
@@ -389,7 +389,7 @@ fun ListenTogetherScreen(
                         failure = null
                     },
                     busy = busy,
-                    enabled = signedIn && ListenTogether.hasServer,
+                    enabled = !busy,
                     error = failure,
                     onSubmit = { openPartyPreview(codeInput, null) },
                 )
@@ -490,15 +490,33 @@ fun ListenTogetherScreen(
         if (!state.inParty) {
             PartyLanding(
                 avatarUrl = ListenTogether.myAvatarUrl(),
-                enabled = signedIn && ListenTogether.hasServer && !busy,
+                enabled = !busy,
                 // The last attempt's message does not belong on the next one.
                 onCreate = {
                     failure = null
-                    sheet = PartySheet.Create
+                    if (!signedIn) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.listen_together_sign_in_footer),
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                        onSignIn()
+                    } else {
+                        sheet = PartySheet.Create
+                    }
                 },
                 onJoin = {
                     failure = null
-                    sheet = PartySheet.JoinCode
+                    if (!signedIn) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.listen_together_sign_in_footer),
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                        onSignIn()
+                    } else {
+                        sheet = PartySheet.JoinCode
+                    }
                 },
             )
         } else {

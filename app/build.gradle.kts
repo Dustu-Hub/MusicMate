@@ -48,10 +48,10 @@ val lastfmSecret: String = (
  * the screen. See ListenTogether.DEFAULT_SERVER.
  */
 val listenTogetherServer: String = (
-    localProps.getProperty("LISTEN_TOGETHER_SERVER")
-        ?: System.getenv("LISTEN_TOGETHER_SERVER")
+    localProps.getProperty("LISTEN_TOGETHER_SERVER")?.trim()?.takeIf { it.isNotEmpty() }
+        ?: System.getenv("LISTEN_TOGETHER_SERVER")?.trim()?.takeIf { it.isNotEmpty() }
         ?: "https://shitmate-listen-together.onrender.com"
-    ).trim().trimEnd('/')
+    ).trimEnd('/')
 
 /*
  * The service that checks this app's hardware key attestation and issues addon

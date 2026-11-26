@@ -27,7 +27,11 @@ jobs:
       run: |
         echo "LASTFM_API_KEY=${{ secrets.LASTFM_API_KEY }}" > local.properties
         echo "LASTFM_SECRET=${{ secrets.LASTFM_SECRET }}" >> local.properties
-        echo "LISTEN_TOGETHER_SERVER=${{ secrets.LISTEN_TOGETHER_SERVER }}" >> local.properties
+        if [ -n "${{ secrets.LISTEN_TOGETHER_SERVER }}" ]; then
+          echo "LISTEN_TOGETHER_SERVER=${{ secrets.LISTEN_TOGETHER_SERVER }}" >> local.properties
+        else
+          echo "LISTEN_TOGETHER_SERVER=https://shitmate-listen-together.onrender.com" >> local.properties
+        fi
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
