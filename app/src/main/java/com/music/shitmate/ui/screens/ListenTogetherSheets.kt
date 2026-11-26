@@ -677,10 +677,10 @@ internal fun InviteSheet(
             shape = RoundedCornerShape(percent = 50),
             modifier = Modifier.fillMaxWidth().height(52.dp),
         ) {
-            Icon(SfIcons.Share, contentDescription = null, modifier = Modifier.size(20.dp))
+            Icon(Icons.Rounded.Link, contentDescription = null, modifier = Modifier.size(20.dp))
             Spacer(Modifier.width(8.dp))
             Text(
-                text = stringResource(R.string.share),
+                text = stringResource(R.string.listen_together_share_link),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
             )
