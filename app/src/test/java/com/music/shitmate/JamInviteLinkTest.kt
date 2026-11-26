@@ -23,12 +23,20 @@ class JamInviteLinkTest {
     fun `parses and normalizes a public invite`() {
         assertEquals(
             "A1B2C3",
+            JamInviteLink.parse("https://shitmate-listen-together.onrender.com/invite/a1b2c3"),
+        )
+        assertEquals(
+            "A1B2C3",
             JamInviteLink.parse("https://shitmate.kushagrasingh.in/invite/a1b2c3"),
         )
     }
 
     @Test
     fun `accepts query parameters without making them part of the code`() {
+        assertEquals(
+            "ABC123",
+            JamInviteLink.parse("https://shitmate-listen-together.onrender.com/invite/ABC123?from=share"),
+        )
         assertEquals(
             "ABC123",
             JamInviteLink.parse("https://shitmate.kushagrasingh.in/invite/ABC123?from=share"),
@@ -49,7 +57,7 @@ class JamInviteLinkTest {
     @Test
     fun `builds the canonical share URL`() {
         assertEquals(
-            "https://shitmate.kushagrasingh.in/invite/ABC123",
+            "${JamInviteLink.ORIGIN}/invite/ABC123",
             JamInviteLink.url("abc123"),
         )
     }
@@ -65,11 +73,11 @@ class JamInviteLinkTest {
             JamInviteLink.url("abc123", "https://my-party.onrender.com/"),
         )
         assertEquals(
-            "https://shitmate.kushagrasingh.in/invite/ABC123",
+            "${JamInviteLink.ORIGIN}/invite/ABC123",
             JamInviteLink.url("abc123", ""),
         )
         assertEquals(
-            "https://shitmate.kushagrasingh.in/invite/ABC123",
+            "${JamInviteLink.ORIGIN}/invite/ABC123",
             JamInviteLink.url("abc123", null),
         )
     }
@@ -135,7 +143,7 @@ class JamInviteLinkTest {
         } else {
             JamInviteLink.url(code, activePartyHost)
         }
-        assertEquals("https://shitmate.kushagrasingh.in/invite/JAM001", link)
+        assertEquals("${JamInviteLink.ORIGIN}/invite/JAM001", link)
     }
 
     @Test

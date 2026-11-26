@@ -9,7 +9,8 @@ package com.music.shitmate.data.listentogether
  */
 object JamInvite {
 
-    const val ORIGIN = "https://shitmate.kushagrasingh.in"
+    const val ORIGIN = "https://shitmate-listen-together.onrender.com"
+    private const val LEGACY_ORIGIN = "https://shitmate.kushagrasingh.in"
 
     /** How many characters a party code carries. */
     const val CODE_LENGTH = 6
@@ -18,9 +19,13 @@ object JamInvite {
     fun parse(value: String?): String? {
         val text = value?.trim() ?: return null
         val prefix = "$ORIGIN/invite/"
-        if (!text.startsWith(prefix, ignoreCase = true)) return null
-        // Not removePrefix: it is case-sensitive, and the check above is not.
-        val code = text.substring(prefix.length).substringBefore('?').substringBefore('#')
+        val legacyPrefix = "$LEGACY_ORIGIN/invite/"
+        val codeCandidate = when {
+            text.startsWith(prefix, ignoreCase = true) -> text.substring(prefix.length)
+            text.startsWith(legacyPrefix, ignoreCase = true) -> text.substring(legacyPrefix.length)
+            else -> return null
+        }
+        val code = codeCandidate.substringBefore('?').substringBefore('#')
         if (code.length != CODE_LENGTH || !code.all(Char::isLetterOrDigit)) return null
         return code.uppercase()
     }

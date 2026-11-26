@@ -16,10 +16,11 @@ data class ParsedJamInvite(
 /** Relays a ShitMate web or scheme invite from [com.music.shitmate.MainActivity] to Compose. */
 object JamInviteLink {
 
-    const val ORIGIN = "https://shitmate.kushagrasingh.in"
+    const val ORIGIN = "https://shitmate-listen-together.onrender.com"
 
     private const val EXTRA_CONSUMED = "shitmate.jamInviteConsumed"
-    private const val HOST = "shitmate.kushagrasingh.in"
+    private const val HOST = "shitmate-listen-together.onrender.com"
+    private const val LEGACY_HOST = "shitmate.kushagrasingh.in"
     private const val CUSTOM_SCHEME = "shitmate"
     private const val CUSTOM_HOST = "party"
 
@@ -67,8 +68,8 @@ object JamInviteLink {
             return ParsedJamInvite(code = code, serverUrl = server)
         }
 
-        // 2. Official web domain: https://shitmate.kushagrasingh.in/invite/<CODE>
-        if (scheme == "https" && host == HOST) {
+        // 2. Official web domain: https://shitmate-listen-together.onrender.com/invite/<CODE>
+        if (scheme == "https" && (host == HOST || host == LEGACY_HOST)) {
             val match = INVITE_PATH.matchEntire(uri.path.orEmpty()) ?: return null
             val code = match.groupValues[1].uppercase()
             return ParsedJamInvite(code = code, serverUrl = server)

@@ -25,6 +25,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.Person
+import com.music.shitmate.ui.icons.SfIcons
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -676,10 +677,10 @@ internal fun InviteSheet(
             shape = RoundedCornerShape(percent = 50),
             modifier = Modifier.fillMaxWidth().height(52.dp),
         ) {
-            Icon(Icons.Rounded.Link, contentDescription = null, modifier = Modifier.size(20.dp))
+            Icon(SfIcons.Share, contentDescription = null, modifier = Modifier.size(20.dp))
             Spacer(Modifier.width(8.dp))
             Text(
-                text = stringResource(R.string.listen_together_share_link),
+                text = stringResource(R.string.share),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
             )

@@ -247,6 +247,10 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="https"
+                    android:host="shitmate-listen-together.onrender.com"
+                    android:pathPattern="/invite/......" />
+                <data
+                    android:scheme="https"
                     android:host="shitmate.kushagrasingh.in"
                     android:pathPattern="/invite/......" />
             </intent-filter>
