@@ -127,6 +127,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.music.shitmate.auth.DiscordLoginScreen
@@ -915,10 +917,16 @@ private fun ShitMateApp(
      */
     val updateNotice = updateAvailable
 
-    LaunchedEffect(updateNotice) {
-        if (updateNotice != null && !updateDialogShown) {
+    LaunchedEffect(updateNotice, onboardingComplete) {
+        if (updateNotice != null && onboardingComplete && !updateDialogShown) {
             updateDialogShown = true
             showUpdateDialog = true
+        }
+    }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        if (AppUpdateChecker.retryPendingInstallIfAllowed(context)) {
+            showUpdateDialog = false
         }
     }
     val query by viewModel.query.collectAsStateWithLifecycle()

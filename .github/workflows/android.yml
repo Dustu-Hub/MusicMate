@@ -50,7 +50,7 @@ jobs:
           if [ -f "$f" ]; then
             if [[ "$f" == *"arm64"* ]]; then
               cp "$f" release_apk/ShitMate-arm64.apk
-              cp "$f" release_apk/ShitMate-v2.0.1.apk
+              cp "$f" release_apk/ShitMate-v2.0.3.apk
             elif [[ "$f" == *"universal"* ]]; then
               cp "$f" release_apk/ShitMate-Universal.apk
               cp "$f" release_apk/ShitMate.apk
@@ -86,17 +86,17 @@ jobs:
     - name: Publish GitHub Release with APK
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v2.0.2
-        name: "ShitMate v2.0.2"
+        tag_name: v2.0.3
+        name: "ShitMate v2.0.3"
         body: |
-          ### ShitMate v2.0.2 Release
+          ### ShitMate v2.0.3 Release
           
           Direct Android APK downloads attached below:
           - ⬇️ **ShitMate.apk** (Universal - works on all devices)
           - ⬇️ **ShitMate-arm64.apk** (Optimized for modern 64-bit phones)
           
           #### What's New:
-          - 🔄 **In-App Update System**: One-tap background updater with direct Android PackageInstaller integration
+          - 🔄 **Reliable In-App Updater**: Added rate-limit-free GitHub fallback, Android 11+ `<queries>` installer visibility, automatic resume after Unknown Sources permission, APK integrity checks, and clear Up-to-date / Error dialogs
           - ⚡ Clean **ShitMate** branding across the entire app
           - 🔑 Unified permanent cryptographic signing
           - 🎵 Lossless Hi-Res & YouTube Music streaming

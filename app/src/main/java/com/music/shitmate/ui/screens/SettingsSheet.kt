@@ -1954,15 +1954,52 @@ fun SettingsScreen(
         if (section == null && searchQuery.isBlank()) {
             SettingsGroup(topSpacing = 20.dp) {
                 var checkingUpdate by remember { mutableStateOf(false) }
+                var showUpToDateDialog by remember { mutableStateOf(false) }
+                var updateErrorMessage by remember { mutableStateOf<String?>(null) }
                 val updateScope = rememberCoroutineScope()
                 val updateAvailable by AppUpdateChecker.available.collectAsStateWithLifecycle()
+                val hasCheckedUpdate by AppUpdateChecker.hasChecked.collectAsStateWithLifecycle()
+                val lastUpdateError by AppUpdateChecker.lastError.collectAsStateWithLifecycle()
+
+                fun runUpdateCheck() {
+                    if (checkingUpdate) return
+                    checkingUpdate = true
+                    updateScope.launch {
+                        val result = AppUpdateChecker.checkForUpdate()
+                        checkingUpdate = false
+                        when (result) {
+                            is AppUpdateChecker.CheckResult.UpdateAvailable -> {
+                                onCheckForUpdates?.invoke()
+                            }
+                            is AppUpdateChecker.CheckResult.UpToDate -> {
+                                showUpToDateDialog = true
+                            }
+                            is AppUpdateChecker.CheckResult.Failed -> {
+                                updateErrorMessage = result.message
+                            }
+                        }
+                    }
+                }
+
                 SettingsRow(
                     icon = Icons.Rounded.Upgrade,
-                    title = stringResource(R.string.check_for_updates),
+                    title = if (updateAvailable != null) {
+                        "Update available"
+                    } else {
+                        stringResource(R.string.check_for_updates)
+                    },
+                    badge = when {
+                        checkingUpdate -> null
+                        updateAvailable != null -> "v${updateAvailable?.version}"
+                        hasCheckedUpdate && lastUpdateError == null -> "Latest"
+                        else -> null
+                    },
                     subtitle = when {
                         checkingUpdate -> stringResource(R.string.checking_for_updates)
-                        updateAvailable != null -> "Update v${updateAvailable?.version} available • Tap to update"
-                        else -> "Current version: $version (Up to date)"
+                        updateAvailable != null -> "Tap to download & install (current: v$version)"
+                        lastUpdateError != null -> "Current version: v$version • Tap to retry"
+                        hasCheckedUpdate -> "v$version • You're on the latest version"
+                        else -> "Current version: v$version • Tap to check"
                     },
                     trailing = {
                         if (checkingUpdate) {
@@ -1979,25 +2016,63 @@ fun SettingsScreen(
                         }
                     },
                     onClick = {
-                        if (!checkingUpdate) {
-                            checkingUpdate = true
-                            updateScope.launch {
-                                AppUpdateChecker.check()
-                                checkingUpdate = false
-                                val update = AppUpdateChecker.available.value
-                                if (update != null) {
-                                    onCheckForUpdates?.invoke()
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        "You are using the latest version of ShitMate (v$version)",
-                                        Toast.LENGTH_SHORT,
-                                    ).show()
-                                }
-                            }
+                        if (updateAvailable != null) {
+                            onCheckForUpdates?.invoke()
+                        } else {
+                            runUpdateCheck()
                         }
                     },
                 )
+
+                if (showUpToDateDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showUpToDateDialog = false },
+                        title = { Text("ShitMate is up to date") },
+                        text = {
+                            Text("You are already running the latest version (v$version).")
+                        },
+                        confirmButton = {
+                            TextButton(onClick = { showUpToDateDialog = false }) {
+                                Text("OK")
+                            }
+                        },
+                    )
+                }
+
+                updateErrorMessage?.let { errorMsg ->
+                    AlertDialog(
+                        onDismissRequest = { updateErrorMessage = null },
+                        title = { Text("Update check failed") },
+                        text = {
+                            Text("Couldn't fetch the latest release from GitHub.\n\n$errorMsg")
+                        },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    updateErrorMessage = null
+                                    runUpdateCheck()
+                                },
+                            ) {
+                                Text(stringResource(R.string.try_again))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(
+                                onClick = {
+                                    updateErrorMessage = null
+                                    context.startActivity(
+                                        Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse("https://github.com/Dustu-Hub/ShitMate/releases/latest"),
+                                        ),
+                                    )
+                                },
+                            ) {
+                                Text(stringResource(R.string.open_releases_page))
+                            }
+                        },
+                    )
+                }
             }
         Text(
             text = buildAnnotatedString {

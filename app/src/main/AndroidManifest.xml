@@ -68,6 +68,20 @@
         android:name="android.permission.READ_PHONE_STATE"
         tools:node="remove" />
 
+    <!-- Android 11+ package visibility for resolving system APK installers. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="application/vnd.android.package-archive" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.INSTALL_PACKAGE" />
+            <data android:scheme="content" />
+        </intent>
+        <package android:name="com.google.android.packageinstaller" />
+        <package android:name="com.android.packageinstaller" />
+    </queries>
+
     <application
         android:name=".ShitMateApplication"
         android:allowBackup="true"

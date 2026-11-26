@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -148,9 +149,15 @@ fun UpdateAvailableDialog(
                     textAlign = TextAlign.Center,
                 )
                 Text(
-                    text = when (state) {
-                        is AppUpdateChecker.DownloadState.Downloading ->
-                            stringResource(R.string.update_downloading_body, version)
+                    text = when (val current = state) {
+                        is AppUpdateChecker.DownloadState.Downloading -> {
+                            val base = stringResource(R.string.update_downloading_body, version)
+                            if (current.fraction >= 0f) {
+                                "$base (${(current.fraction * 100).toInt().coerceIn(0, 100)}%)"
+                            } else {
+                                base
+                            }
+                        }
                         is AppUpdateChecker.DownloadState.Ready ->
                             stringResource(R.string.update_ready_body, version)
                         is AppUpdateChecker.DownloadState.Failed ->
@@ -171,7 +178,17 @@ fun UpdateAvailableDialog(
                 // hairline track — same weight as [AlertRule], so it reads as
                 // part of the card rather than a widget bolted onto it.
                 val downloading = state as? AppUpdateChecker.DownloadState.Downloading
-                if (downloading != null || state is AppUpdateChecker.DownloadState.Failed) {
+                if (downloading != null && downloading.fraction < 0f) {
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .fillMaxWidth()
+                            .height(DOWNLOAD_ROW_HEIGHT)
+                            .clip(RoundedCornerShape(DOWNLOAD_ROW_HEIGHT / 2)),
+                        color = MaterialTheme.colorScheme.primary,
+                        trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.14f),
+                    )
+                } else if (downloading != null || state is AppUpdateChecker.DownloadState.Failed) {
                     Box(
                         Modifier
                             .padding(top = 12.dp)
