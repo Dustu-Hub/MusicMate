@@ -2086,15 +2086,7 @@ fun SettingsScreen(
                 withLink(LinkAnnotation.Url("https://github.com/Dustu-Hub/ShitMate", linkStyles)) {
                     append("GitHub")
                 }
-                append("  ")
-                withLink(LinkAnnotation.Url("https://github.com/Dustu-Hub", linkStyles)) {
-                    append("Developer")
-                }
-                append("  ")
-                withLink(LinkAnnotation.Url("https://discord.gg/pDdKfrdHY6", linkStyles)) {
-                    append("Discord")
-                }
-                append("\n~YouTube Music & Listen Together Backend")
+                append("\nMade by Shibam")
             },
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
