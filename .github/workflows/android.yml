@@ -44,13 +44,21 @@ jobs:
 
     - name: Prepare APK
       run: |
+        VERSION=$(sed -nE 's/.*extra\["shitmateVersionName"\] = "([^"]+)".*/\1/p' build.gradle.kts)
+        if [ -z "$VERSION" ]; then
+          VERSION="2.0.4"
+        fi
+        echo "APP_VERSION=v$VERSION" >> $GITHUB_ENV
+        echo "RELEASE_NAME=ShitMate v$VERSION" >> $GITHUB_ENV
+        echo "Detected version: v$VERSION"
+
         mkdir -p release_apk
         # Copy production APKs
         for f in app/build/outputs/apk/prod/debug/*.apk; do
           if [ -f "$f" ]; then
             if [[ "$f" == *"arm64"* ]]; then
               cp "$f" release_apk/ShitMate-arm64.apk
-              cp "$f" release_apk/ShitMate-v2.0.3.apk
+              cp "$f" "release_apk/ShitMate-v${VERSION}.apk"
             elif [[ "$f" == *"universal"* ]]; then
               cp "$f" release_apk/ShitMate-Universal.apk
               cp "$f" release_apk/ShitMate.apk
@@ -86,20 +94,21 @@ jobs:
     - name: Publish GitHub Release with APK
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v2.0.3
-        name: "ShitMate v2.0.3"
+        tag_name: ${{ env.APP_VERSION }}
+        name: ${{ env.RELEASE_NAME }}
         body: |
-          ### ShitMate v2.0.3 Release
+          ### ${{ env.RELEASE_NAME }} Release
           
           Direct Android APK downloads attached below:
           - ⬇️ **ShitMate.apk** (Universal - works on all devices)
           - ⬇️ **ShitMate-arm64.apk** (Optimized for modern 64-bit phones)
           
-          #### What's New:
+          #### What's New in ${{ env.RELEASE_NAME }}:
+          - 🎵 **Listen Together**: Free real-time party sync backend powered by Render Go server
+          - 🔗 Clean party invite sharing with 6-character room codes (removed broken web link)
           - 🔄 **Reliable In-App Updater**: Added rate-limit-free GitHub fallback, Android 11+ `<queries>` installer visibility, automatic resume after Unknown Sources permission, APK integrity checks, and clear Up-to-date / Error dialogs
           - ⚡ Clean **ShitMate** branding across the entire app
           - 🔑 Unified permanent cryptographic signing
-          - 🎵 Lossless Hi-Res & YouTube Music streaming
           - 🎤 Karaoke / Vocal Suppressor DSP Mode (Equalizer settings)
           - 📊 Neon Audio Waveform Visualizer
           - 🖤 True AMOLED Pitch-Black Theme
